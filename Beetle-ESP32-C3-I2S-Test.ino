@@ -34,8 +34,6 @@ const uint8_t I2S_AMP_DIN_PIN = GPIO_NUM_7;
 
 const uint8_t SD_CHIP_SELECT_PIN = GPIO_NUM_2;
 
-#define ENABLE_DBG   // DFRobot debug switch - set it also in DFRobot_MAX98357A.h
-
 void setup(void)
 {
   pinMode(beetleLed,OUTPUT);
@@ -81,10 +79,12 @@ void setup(void)
    * @n    MOSI  |   MOSI(IO23)
    * @n  Search MicroSD card reader module at www.dfrobot.com
    */
-  while (!amplifier.initSDCard(/*csPin=*/SD_CHIP_SELECT_PIN)){
+  while (!amplifier.initSDCard(/*csPin=*/SD_CHIP_SELECT_PIN))
+  {
     Serial.println("Initialize SD card failed !");
     delay(3000);
   }
+  
   Serial.println("Initialize succeed!");
 
   /**
@@ -100,7 +100,8 @@ void setup(void)
    * @return None
    * @note Only support English for music file and path name currently and try not to use spaces, only support .wav for the audio format currently
    */ 
-  amplifier.scanSDMusic(musicList+1);
+  amplifier.scanSDMusic(musicList);
+
   /**
    * Print the list of the scanned music files that can be played
    */
@@ -142,20 +143,20 @@ close the audio filter
    * @return None
    */
   amplifier.SDPlayerControl(SD_AMPLIFIER_PLAY);
+  delay(10000);
 
-  /**
-   * @brief Play music files in the SD card
-   * @param Filename - music file name, only support the music files in .wav format currently
-   * @note Music file name must be an absolute path like /musicDir/music.wav
-   * @return None
-   */
+//  /**
+//   * @brief Play music files in the SD card
+//   * @param Filename - music file name, only support the music files in .wav format currently
+//   * @note Music file name must be an absolute path like /musicDir/music.wav
+//   * @return None
+//   
   if(musicList[1].length()){
     Serial.println("Changing Music...\n");
     amplifier.playSDMusic(musicList[1].c_str());
   }else{
     Serial.println("The currently selected music file is incorrect!\n");
   }
-
 }
 
 void loop()
